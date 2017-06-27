@@ -25,6 +25,9 @@ app.use(bodyParser.urlencoded({ extended: false }))
 // parse application/json
 app.use(bodyParser.json())
 
+//Set public folder
+app.use(express.static(path.join(__dirname, 'public')))
+
 //Load view engine
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug')
@@ -74,8 +77,15 @@ app.post('/articulos/add', function(req, res){
     articulo.title = req.body.title;
     articulo.author = req.body.author;
     articulo.body = req.body.body;
-    console.log(articulo);
-    return;
+
+    articulo.save(function(err){
+        if(err){
+            console.log(err);
+            return;
+        }else{
+            res.redirect('/')
+        }
+    })
 })
 
 //Start Server
