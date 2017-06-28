@@ -5,4 +5,5 @@ block content
     h4 escrito por #{articulo.author}
     p= articulo.body
     hr
-    a.btn.btn-default(href='/articulo/editar/'+articulo._id) Editar
+    a.btn.btn-default(href='/articulos/editar/'+articulo._id) Editar
+    a.btn.btn-danger.borrar-articulo(href='#', data-id=articulo._id) Eliminar
