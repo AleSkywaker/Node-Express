@@ -65,6 +65,24 @@ app.get('/', function(req, res){
   });
 });
 
+//Get Single Article
+app.get('/articulo/:id', function(req,res){
+    Articulo.findById(req.params.id, function(err, articulo){
+        res.render('articulo', {
+            articulo:articulo
+        })
+    });
+})
+//Load Edit Form
+app.get('/articulo/editar/:id', function(req,res){
+    Articulo.findById(req.params.id, function(err, articulo){
+        res.render('editar', {
+            title: 'Editar articulo',
+            articulo:articulo
+        })
+    });
+})
+
 //Add Routes
 app.get('/articulos/add', function(req,res){
     res.render('add', {
@@ -72,6 +90,7 @@ app.get('/articulos/add', function(req,res){
     });
 });
 
+//Añadir articulo
 app.post('/articulos/add', function(req, res){
     let articulo = new Articulo();
     articulo.title = req.body.title;
@@ -79,6 +98,24 @@ app.post('/articulos/add', function(req, res){
     articulo.body = req.body.body;
 
     articulo.save(function(err){
+        if(err){
+            console.log(err);
+            return;
+        }else{
+            res.redirect('/')
+        }
+    })
+})
+//update submit
+app.post('/articulo/editar/:id', function(req, res){
+    let articulo = {};
+    articulo.title = req.body.title;
+    articulo.author = req.body.author;
+    articulo.body = req.body.body;
+
+   let query = {_id:req.params.id};
+
+    Articulo.update(query, articulo, function(err){
         if(err){
             console.log(err);
             return;
