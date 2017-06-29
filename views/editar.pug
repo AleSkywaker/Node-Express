@@ -1,14 +1,12 @@
 extends layout
 
 block content
-    h1 #{title}
+    h1  #{title}  #{nombre} aqui puedes editar el articulo:)
     form(method='POST', action='/articulos/editar/'+articulo._id)
         #form-group
             label Title:
             input.form-control(name='title', type='text', value=articulo.title)
-        #form-group
-            label Author:
-            input.form-control(name='author', type='text', value=articulo.author)
+        
         #form-group
             label Body:
             textarea.form-control(name='body')= articulo.body

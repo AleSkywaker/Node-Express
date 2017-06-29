@@ -13,6 +13,8 @@ var app = express();
 
 //Traer moduelo
 let Articulo = require('./models/article');
+//modelo user
+let User = require('./models/user');
 
 
 mongoose.connect(config.database);
@@ -92,8 +94,9 @@ app.get('/', function (req, res) {
         } else {
             res.render('index', {
                 title: 'Aplicacion Alex',
-                articles: articles
+                articles: articles  
             });
+            
         }
         /*let articles = [{
                 id:1,

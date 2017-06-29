@@ -3,19 +3,28 @@ const router = express.Router();
 
 //Traer moduelo
 let Articulo = require('../models/article');
+// Modelo de usuario
+let User = require('../models/user');
 
 //Load Edit Form
-router.get('/editar/:id', function (req, res) {
+router.get('/editar/:id', asegurarAuth, function (req, res) {
     Articulo.findById(req.params.id, function (err, articulo) {
-        res.render('editar', {
-            title: 'Editar articulo',
-            articulo: articulo
+        User.findById(articulo.author, function (err, user) {
+            if (articulo.author != req.user._id) {
+                req.flash('danger', 'Debes ser el autor del post para poder editarlo');
+                res.redirect('/');
+            }
+            res.render('editar', {
+                title: 'Bienvenido',
+                articulo: articulo,
+                nombre: user.username
+            })
         })
     });
 })
 
 //Add Routes
-router.get('/add', function (req, res) {
+router.get('/add', asegurarAuth, function (req, res) {
     res.render('add', {
         title: 'Añadir Articulos'
     });
@@ -24,7 +33,7 @@ router.get('/add', function (req, res) {
 //Añadir articulo
 router.post('/add', function (req, res) {
     req.checkBody('title', 'Titulo es requerido').notEmpty();
-    req.checkBody('author', 'Autor es requerido').notEmpty();
+    //req.checkBody('author', 'Autor es requerido').notEmpty();
     req.checkBody('body', 'Descripcion es requerido').notEmpty();
 
     //Get errors
@@ -37,7 +46,7 @@ router.post('/add', function (req, res) {
     } else {
         let articulo = new Articulo();
         articulo.title = req.body.title;
-        articulo.author = req.body.author;
+        articulo.author = req.user._id;
         articulo.body = req.body.body;
 
         articulo.save(function (err) {
@@ -72,23 +81,47 @@ router.post('/editar/:id', function (req, res) {
 })
 //Delete Request
 router.delete('/:id', function (req, res) {
+    if (!req.user._id) {
+        res.status(500).send();
+        
+    }
     let query = { _id: req.params.id }
 
-    Articulo.remove(query, function (err) {
-        if (err) {
-            console.log(err);
+    Articulo.findById(req.params.id, function (err, articulo) {
+        if (articulo.author != req.user._id) {
+            res.status(500).send();
+            console.log('aqui')
+        } else {
+            Articulo.remove(query, function (err) {
+                if (err) {
+                    console.log(err);
+                }
+                res.send('Has eliminado un articulo correctamente');
+            })
         }
-        res.send('Has eliminado un articulo correctamente');
     })
 })
 
 //Get Single Article
 router.get('/:id', function (req, res) {
     Articulo.findById(req.params.id, function (err, articulo) {
-        res.render('articulo', {
-            articulo: articulo
-        })
+        User.findById(articulo.author, function (err, user) {
+            res.render('articulo', {
+                articulo: articulo,
+                author: user.username
+
+            });
+        });
     });
 })
 
-module.exports= router;
+//Access Control
+function asegurarAuth(req, res, next) {
+    if (req.isAuthenticated()) {
+        return next();
+    } else {
+        req.flash('danger', 'Debes logearte para poder escribir');
+        res.redirect('/users/login');
+    }
+}
+module.exports = router;

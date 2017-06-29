@@ -6,6 +6,7 @@ Unas pequeñas practicas para grabar unos videos tutoriales.
 
 - [Node](https://nodejs.org/es/)
 - [NPM](https://www.npmjs.com/)
+- [Pug](https://www.npmjs.com/package/pug)
 - [Body-Parser](https://github.com/expressjs/body-parser)
 - [Bcrypt.JS](https://www.npmjs.com/package/bcryptjs) no es Bcrypt normal, este es ligero.
 - [Express](http://expressjs.com/es/)

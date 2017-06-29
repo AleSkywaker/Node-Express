@@ -2,8 +2,10 @@ extends layout
 
 block content
     h1= articulo.title
-    h4 escrito por #{articulo.author}
+    h4 escrito por #{author}
     p= articulo.body
     hr
-    a.btn.btn-default(href='/articulos/editar/'+articulo._id) Editar
-    a.btn.btn-danger.borrar-articulo(href='#', data-id=articulo._id) Eliminar
+    if user
+        if user.id ==articulo.author
+            a.btn.btn-default(href='/articulos/editar/'+articulo._id) Editar
+            a.btn.btn-danger.borrar-articulo(href='#', data-id=articulo._id) Eliminar
